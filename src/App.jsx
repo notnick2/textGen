@@ -1,7 +1,5 @@
-// App.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import SkeletonLoader from './SkeltonLoader';
 
 function App() {
   const [recipient, setRecipient] = useState('');
@@ -27,7 +25,40 @@ function App() {
       setOutput(response.data);
     } catch (error) {
       console.error('Error generating text:', error);
+      setLoading(false); // Ensure loading is set to false in case of error
     }
+  };
+
+  const TypingEffect = ({ text }) => {
+    const [displayText, setDisplayText] = useState('');
+
+    useEffect(() => {
+      let index = 0;
+
+      const interval = setInterval(() => {
+        if (index < text.length) {
+          setDisplayText((prev) => prev + text[index]);
+          index++;
+        } else {
+          clearInterval(interval);
+        }
+      }, 5); // Adjust typing speed here (in milliseconds)
+
+      return () => clearInterval(interval);
+    }, [text]);
+
+    return (
+      <div
+        style={{
+          
+          whiteSpace: 'pre-wrap', // Use pre-wrap for line breaks with wrapping
+          maxWidth: '775px', // Set a maximum width to prevent overflow
+          margin: '0 auto', // Center the text horizontally
+        }}
+      >
+        {displayText}
+      </div>
+    );
   };
 
   return (
@@ -140,12 +171,9 @@ function App() {
           </button>
 
           {/* Display generated text */}
-          { loading ? ( 
-            <SkeletonLoader/>
-            ) : output && (
-            <div className="mt-8 bg-white text-black p-4 rounded-lg">
-              <h2 className="text-xl font-bold mb-2">Generated Text:</h2>
-              <p>{output}</p>
+          {output && (
+            <div>
+              <TypingEffect text={output} />
             </div>
           )}
         </div>
