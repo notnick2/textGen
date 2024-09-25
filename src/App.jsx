@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import SkeletonLoader from './SkeltonLoader';
 
 function App() {
   const [recipient, setRecipient] = useState('');
@@ -171,7 +172,7 @@ function App() {
           </button>
 
           {/* Display generated text */}
-          {output && (
+          { loading ? ( <SkeletonLoader/>) : output && (
             <div>
               <TypingEffect text={output} />
             </div>
